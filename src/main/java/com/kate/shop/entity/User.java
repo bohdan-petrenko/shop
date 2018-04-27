@@ -1,5 +1,9 @@
 package com.kate.shop.entity;
 
+import com.kate.shop.controller.UserController;
+import com.kate.shop.utils.DigestUtils;
+import org.slf4j.LoggerFactory;
+
 import java.time.OffsetDateTime;
 import java.util.Set;
 
@@ -16,6 +20,7 @@ public class User {
     private OffsetDateTime expired;
     private Set<Role> roles; //TODO many to many relationship
 
+    private final org.slf4j.Logger log = LoggerFactory.getLogger(UserController.class);
 
     public Integer getId() {
         return id;
@@ -32,6 +37,7 @@ public class User {
 
     public User setEmail(String email) {
         this.email = email;
+        log.info("GOT EMAIL  ", email);
         return this;
     }
 
@@ -67,7 +73,7 @@ public class User {
     }
 
     public User setPassword(String password) {
-        this.password = password;
+        this.password = DigestUtils.sha1(password);
         return this;
     }
 

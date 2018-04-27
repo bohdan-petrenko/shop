@@ -21,6 +21,7 @@ public interface UserRepository {
                      Optional<Boolean> enabled, Optional<OffsetDateTime> createdFrom, Optional<OffsetDateTime> createdTo,
                      Integer limit, Integer offset);
 
+    @Deprecated
     Integer count();
 
     User save(User user);
