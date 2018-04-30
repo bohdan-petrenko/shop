@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 @Service
 public class PermissionServiceImpl implements PermissionService {
 
@@ -17,5 +17,15 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public Permission findPermissionById(Short id) {
         return repository.findPermissionById(id);
+    }
+
+    @Override
+    public Permission savePermission(Permission permission) {
+        return repository.savePermission(permission);
+    }
+
+    @Override
+    public boolean deletePermission(Short id) {
+        return repository.deletePermission(id);
     }
 }

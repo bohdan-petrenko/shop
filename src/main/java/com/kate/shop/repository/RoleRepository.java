@@ -6,4 +6,7 @@ public interface RoleRepository {
 
     Role findRoleById(Short id);
 
+    Role saveRole(Role role);
+
+    boolean deleteRole(Short roleId);
 }

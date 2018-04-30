@@ -50,6 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
         return template.queryForObject("select count(1) from users", new EmptySqlParameterSource(), Integer.class);
     }
 
+
     @Override
     public User save(User user) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -80,7 +81,6 @@ public class UserRepositoryImpl implements UserRepository {
         params.addValue("id", userId);
         template.update("delete from users where id = :id", params);
         return true;
-
     }
 
     private RowMapper<User> mapper = new RowMapper<User>() {

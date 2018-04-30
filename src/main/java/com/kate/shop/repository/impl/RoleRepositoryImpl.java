@@ -6,7 +6,10 @@ import com.kate.shop.repository.RoleRepository;
 import com.kate.shop.utils.DaoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -31,6 +34,24 @@ public class RoleRepositoryImpl implements RoleRepository {
         Set<Permission> permissions = (Set<Permission>)DaoUtils.one(template.query("select * from permissions where id = :permissionId", params, mapper));
         role.setPermissions(permissions);
         return DaoUtils.one(template.query("select * from roles where id = :id", params, mapper));
+    }
+
+    @Override
+    public Role saveRole(Role role) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("role", role.getName());
+        KeyHolder holder = new GeneratedKeyHolder();
+        template.update("insert into roles (role) values (:role) returning id", params, holder);
+        role.setId(holder.getKey().shortValue());
+        return role;
+    }
+
+    @Override
+    public boolean deleteRole(Short roleId) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", roleId);
+        template.update("delete from roles where id = :id", params);
+        return true;
     }
 
 

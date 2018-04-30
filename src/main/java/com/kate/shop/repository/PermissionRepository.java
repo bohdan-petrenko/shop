@@ -6,4 +6,8 @@ public interface PermissionRepository {
 
     Permission findPermissionById(Short id);
 
+    Permission savePermission(Permission role);
+
+    boolean deletePermission(Short permissionId);
+
 }
