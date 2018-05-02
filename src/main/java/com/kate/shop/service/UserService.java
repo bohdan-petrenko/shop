@@ -16,11 +16,11 @@ public interface UserService {
                         Optional<Boolean> enabled, Optional<OffsetDateTime> createdFrom, Optional<OffsetDateTime> createdTo,
                         Integer pageNumber);
 
-    Integer count(Optional<String> email, Optional<String> firstName, Optional<String> lastName,
-                     Optional<Boolean> enabled, Optional<OffsetDateTime> createdFrom, Optional<OffsetDateTime> createdTo,
-                     Integer pageNumber);
+    Integer pagesCount(Optional<String> email, Optional<String> firstName, Optional<String> lastName,
+                       Optional<Boolean> enabled, Optional<OffsetDateTime> createdFrom, Optional<OffsetDateTime> createdTo,
+                       Integer pageNumber);
 
-    Integer count();
+    Integer pagesCount();
 
     User save(User user);
 
