@@ -12,9 +12,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,10 +29,14 @@ public class RoleRepositoryImpl implements RoleRepository {
     public Role findRoleById(Short id) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        Role permissionId = DaoUtils.one(template.query("select * from roles_permissions where id = :role_id", params, mapper));
-        Set<Permission> permissions = (Set<Permission>)DaoUtils.one(template.query("select * from permissions where id = :permissionId", params, mapper));
+        //TODO completely incorrect. I provide you correct implementation just for example, because I see that it's difficult for you now.
+        // Try to understand my code and compare it with your variant.  Also my code isn't tested, so it can contains some bugs.
+        Role role = DaoUtils.one(template.query("select * from roles where id = :id", params, mapper));
+        Set<Permission> permissions = new HashSet<>(
+                template.query("select distinct on (p.id) p.* from permissions p inner join roles_permissions rp on p.id = rp.permission_id where rp.role_id = :id",
+                        params, PermissionRepositoryImpl.createMapper()));
         role.setPermissions(permissions);
-        return DaoUtils.one(template.query("select * from roles where id = :id", params, mapper));
+        return role;
     }
 
     @Override
@@ -43,6 +46,9 @@ public class RoleRepositoryImpl implements RoleRepository {
         KeyHolder holder = new GeneratedKeyHolder();
         template.update("insert into roles (role) values (:role) returning id", params, holder);
         role.setId(holder.getKey().shortValue());
+        //TODO You completely forgot about permissions here. So, if I put role with permissions here you just ignore them.
+        //TODO But you have to put new values into `roles_permissions` table.
+        // And also you have to check if permission table contains given permissions ids before save them into `roles_permissions`
         return role;
     }
 
@@ -55,14 +61,9 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
 
-    private RowMapper<Role> mapper = new RowMapper<Role>() {
-        @Override
-        public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Role()
-                    .setId(rs.getShort("id"))
-                    .setName(rs.getString("role"));
-        }
-    };
+    private RowMapper<Role> mapper = (rs, rowNum) -> new Role()
+            .setId(rs.getShort("id"))
+            .setName(rs.getString("role"));
 
 
 }

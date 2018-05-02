@@ -1,8 +1,6 @@
 package com.kate.shop.repository.impl;
 
 import com.kate.shop.entity.Permission;
-import com.kate.shop.entity.Role;
-import com.kate.shop.entity.User;
 import com.kate.shop.repository.PermissionRepository;
 import com.kate.shop.utils.DaoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,12 +45,11 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         return true;
     }
 
-    private RowMapper<Permission> mapper = new RowMapper<Permission>() {
-        @Override
-        public Permission mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Permission()
-                    .setId(rs.getShort("id"))
-                    .setName(rs.getString("permission"));
-        }
-    };
+    private RowMapper<Permission> mapper = createMapper();
+
+    static RowMapper<Permission> createMapper() {
+        return (rs, rowNum) -> new Permission()
+                .setId(rs.getShort("id"))
+                .setName(rs.getString("permission"));
+    }
 }

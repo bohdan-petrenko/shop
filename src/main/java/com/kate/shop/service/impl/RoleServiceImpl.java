@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+// TODO Why you decided to remove transactional here?
 //@Transactional(readOnly = true)
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -27,8 +27,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public boolean deleteRole(Short id) {
+        //TODO You can't delete role while any user uses it. See explanation in PermissionServiceImpl.delete
         return repository.deleteRole(id);
     }
-
 
 }
