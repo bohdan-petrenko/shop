@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
-//TODO users table
 public class User {
     private Integer id;
     private String email;

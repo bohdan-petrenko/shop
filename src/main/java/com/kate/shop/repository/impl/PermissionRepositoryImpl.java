@@ -42,14 +42,14 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     @Override
     public boolean deletePermission(Short permissionId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", permissionId);
-        Map<String, Object> mapParams = new HashMap<>();
-        mapParams.put("id", permissionId);
-        if(DaoUtils.one(template.query("select * from roles_permissions where permission_id = :permissionId", mapParams, mapper)) == null) {
-            template.update("delete from permissions where id = :id", params);
+        params.addValue("permissionId", permissionId);
+        /*Map<String, Object> mapParams = new HashMap<>();
+        mapParams.put("id", permissionId);*/
+        if(template.query("select * from roles_permissions where permission_id = :permissionId", params, mapper).size() == 0) {
+            template.update("delete from permissions where id = :permissionId", params);
             return true;
         }
-        return false;
+        throw new IllegalArgumentException("permission is used");
     }
 
     private RowMapper<Permission> mapper = createMapper();
