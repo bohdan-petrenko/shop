@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-//TODO put implementation here
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -66,7 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User update(User user) {
         User dbUser = findById(user.getId());
         if (dbUser == null)
-            throw new IllegalArgumentException("user with id not found");//todo String.format
+            throw new IllegalArgumentException(String.format("user with id: %d not found", user.getId()));
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("first_name", user.getFirstName());
         params.addValue("last_name", user.getLastName());

@@ -42,34 +42,39 @@ public class RoleRepositoryImpl implements RoleRepository {
 
     @Override
     public Role saveRole(Role role) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        Set<Permission> permissions = new HashSet<>(role.getPermissions());
-        params.addValue("role", role.getName());
-
-        KeyHolder holder = new GeneratedKeyHolder();
-        template.update("insert into roles (role) values (:role) returning id", params, holder);
-
-        for (Permission p : permissions) {
-            params.addValue("permissions", p.getName());
-            List<Permission> resultList = template.query("select * from permissions where permission = :permissions", params, PermissionRepositoryImpl.createMapper());
-
-            if (resultList.size() == 0)
-                throw new IllegalArgumentException("no such permission");
-        }
-        role.setId(holder.getKey().shortValue());
-        params.addValue("roleId", role.getId());
-
-        for (Permission p : permissions) {
-            params.addValue("permissionName", p.getName());
-            Permission permission = template.query("select * from permissions where permission = :permissionName", params, PermissionRepositoryImpl.createMapper()).get(0);
-            params.addValue("permissionId", permission.getId());
-
-            template.update("insert into roles_permissions (role_id, permission_id) values (:roleId, :permissionId) returning role_id", params, holder);
-        }
-
         //TODO You completely forgot about permissions here. So, if I put role with permissions here you just ignore them.
         //TODO But you have to put new values into `roles_permissions` table.
         // And also you have to check if permission table contains given permissions ids before save them into `roles_permissions`
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        List<Permission> resultList = null;
+
+        // checking if permissions are present in permissions table
+        for (Permission p : role.getPermissions()) {
+            params.addValue("permissionId", p.getId());
+            resultList = template.query("select count(*) from permissions where id = :permissionId", params, PermissionRepositoryImpl.createMapper());
+//            resultList = template.query("select * from permissions where id = :permissionId", params, PermissionRepositoryImpl.createMapper());
+        }
+        if (resultList.size() != role.getPermissions().size())
+            throw new IllegalArgumentException("no such permission");
+
+        params = new MapSqlParameterSource();
+        params.addValue("role", role.getName());
+        params.addValue("permissions", role.getPermissions());
+
+        KeyHolder holder = new GeneratedKeyHolder();
+        // insert roles into roles table
+        template.update("insert into roles (role) values (:role) returning id", params, holder);
+        role.setId(holder.getKey().shortValue());
+
+        params = new MapSqlParameterSource();
+        params.addValue("roleId", role.getId());
+
+        // insert role_id and permission_id into roles_permissions table
+        for (Permission p : role.getPermissions()) {
+            params.addValue("permissionId", p.getId());
+            template.update("insert into roles_permissions (role_id, permission_id) values (:roleId, :permissionId) returning role_id", params, holder);
+        }
 
         return role;
     }
@@ -86,6 +91,4 @@ public class RoleRepositoryImpl implements RoleRepository {
     private RowMapper<Role> mapper = (rs, rowNum) -> new Role()
             .setId(rs.getShort("id"))
             .setName(rs.getString("role"));
-
-
 }
