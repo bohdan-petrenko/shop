@@ -11,6 +11,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,11 +40,16 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
-    public boolean deletePermission(Short roleId) {
+    public boolean deletePermission(Short permissionId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", roleId);
-        template.update("delete from permissions where id = :id", params);
-        return true;
+        params.addValue("id", permissionId);
+        Map<String, Object> mapParams = new HashMap<>();
+        mapParams.put("id", permissionId);
+        if(DaoUtils.one(template.query("select * from roles_permissions where permission_id = :permissionId", mapParams, mapper)) == null) {
+            template.update("delete from permissions where id = :id", params);
+            return true;
+        }
+        return false;
     }
 
     private RowMapper<Permission> mapper = createMapper();

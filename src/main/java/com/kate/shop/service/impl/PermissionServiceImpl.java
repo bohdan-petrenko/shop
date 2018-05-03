@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 //TODO Why you decided to remove transactional?
+// because when i'm trying to save new permission there's a message that i can't do this
+// ОШИБКА: в транзакции в режиме \"только чтение\" нельзя выполнить INSERT;
+// nested exception is org.postgresql.util.PSQLException: ОШИБКА: в транзакции в режиме \"только чтение\" нельзя выполнить INSERT"
+// but i'we just tried to make it without readOnly = true, it works
 //@Transactional(readOnly = true)
 @Service
 public class PermissionServiceImpl implements PermissionService {
