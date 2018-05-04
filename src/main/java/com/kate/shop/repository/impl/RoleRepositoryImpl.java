@@ -14,8 +14,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
@@ -48,12 +50,9 @@ public class RoleRepositoryImpl implements RoleRepository {
         // And also you have to check if permission table contains given permissions ids before save them into `roles_permissions`
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        List<Permission> resultList = null;
-        Set<Short> setOfPermissionId = new HashSet<>();
         StringBuffer stringBuffer = new StringBuffer();
 
         for (Permission p : role.getPermissions()) {
-//            stringBuffer.append("'");
             stringBuffer.append(p.getId().toString());
             stringBuffer.append(",");
         }
