@@ -1,13 +1,12 @@
 package com.kate.shop.repository.impl;
 
+import com.kate.shop.controller.UserController;
 import com.kate.shop.entity.Permission;
 import com.kate.shop.entity.Role;
 import com.kate.shop.repository.RoleRepository;
 import com.kate.shop.utils.DaoUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,11 +14,13 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Repository
 public class RoleRepositoryImpl implements RoleRepository {
+
+    private final org.slf4j.Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private NamedParameterJdbcTemplate template;
@@ -41,21 +42,30 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    public Role saveRole(Role role) {
+    public Role saveRole(Role role){
         //TODO You completely forgot about permissions here. So, if I put role with permissions here you just ignore them.
         //TODO But you have to put new values into `roles_permissions` table.
         // And also you have to check if permission table contains given permissions ids before save them into `roles_permissions`
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         List<Permission> resultList = null;
+        Set<Short> setOfPermissionId = new HashSet<>();
+        StringBuffer stringBuffer = new StringBuffer();
 
-        // checking if permissions are present in permissions table
         for (Permission p : role.getPermissions()) {
-            params.addValue("permissionId", p.getId());
-            resultList = template.query("select count(*) from permissions where id = :permissionId", params, PermissionRepositoryImpl.createMapper());
-//            resultList = template.query("select * from permissions where id = :permissionId", params, PermissionRepositoryImpl.createMapper());
+//            stringBuffer.append("'");
+            stringBuffer.append(p.getId().toString());
+            stringBuffer.append(",");
         }
-        if (resultList.size() != role.getPermissions().size())
+
+        stringBuffer.deleteCharAt(stringBuffer.length()-1);
+        // checking if permissions are present in permissions table
+
+        log.info("STRINGBUFFER   " + stringBuffer);
+        params.addValue("permissionId", stringBuffer.toString());
+        int counter = template.queryForObject("select count(*) from permissions where id in("+ stringBuffer+ ")", params, Integer.class);
+
+        if (counter != role.getPermissions().size())
             throw new IllegalArgumentException("no such permission");
 
         params = new MapSqlParameterSource();
@@ -73,7 +83,7 @@ public class RoleRepositoryImpl implements RoleRepository {
         // insert role_id and permission_id into roles_permissions table
         for (Permission p : role.getPermissions()) {
             params.addValue("permissionId", p.getId());
-            template.update("insert into roles_permissions (role_id, permission_id) values (:roleId, :permissionId) returning role_id", params, holder);
+            template.update("insert into roles_permissions (role_id, permission_id) values (:roleId, :permissionId)", params, holder);
         }
 
         return role;
@@ -86,7 +96,6 @@ public class RoleRepositoryImpl implements RoleRepository {
         template.update("delete from roles where id = :id", params);
         return true;
     }
-
 
     private RowMapper<Role> mapper = (rs, rowNum) -> new Role()
             .setId(rs.getShort("id"))
