@@ -62,20 +62,13 @@ public class UserRepositoryImpl implements UserRepository {
         params.addValue("enabled", user.getEnabled());
         params.addValue("created", user.getCreated());
         params.addValue("expired", user.getExpired());
-        /*StringBuilder stringBuilder = new StringBuilder();
-        for (Role r: user.getRoles()) {
-            stringBuilder.append(r.getId());
-            stringBuilder.append(",");
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length()-1);*/
-
         KeyHolder holder = new GeneratedKeyHolder();
-        template.update("insert into users (email, phone, first_name, last_name, password, enabled, created, expired) values (:email, :phone, :first_name, :last_name, :password, :enabled, :created, :expired) returning id", params, holder);
+        template.update("insert into users (email, phone, first_name, last_name, password, enabled, created, expired) " +
+                "values (:email, :phone, :first_name, :last_name, :password, :enabled, :created, :expired) returning id", params, holder);
         user.setId(holder.getKey().intValue());
 
         params = new MapSqlParameterSource();
         params.addValue("userId", user.getId());
-        //params.addValue("roleId", stringBuilder.toString());
         for (Role r: user.getRoles()) {
             params.addValue("roleId", r.getId());
             template.update("insert into users_roles values (:userId, :roleId)", params, holder);
@@ -90,10 +83,24 @@ public class UserRepositoryImpl implements UserRepository {
         if (dbUser == null)
             throw new IllegalArgumentException(String.format("user with id: %d not found", user.getId()));
         MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("email", user.getEmail());
+        params.addValue("phone", user.getPhone());
         params.addValue("first_name", user.getFirstName());
         params.addValue("last_name", user.getLastName());
+        params.addValue("password", user.getPassword());
+        params.addValue("enabled", user.getEnabled());
+        params.addValue("created", user.getCreated());
+        params.addValue("expired", user.getExpired());
         params.addValue("id", user.getId());
-        template.update("update users set first_name = :first_name, last_name = :last_name where id = :id", params);
+        template.update("update users set email = :email, phone = :phone, first_name = :first_name, last_name = :last_name, password = :password," +
+                "enabled = :enabled, created = :created, expired = :expired where id = :id", params);
+        params = new MapSqlParameterSource();
+        params.addValue("userId", user.getId());
+        for (Role r: user.getRoles()) {
+            params.addValue("roleId", r.getId());
+            template.update("delete from users_roles where user_id = :userId", params);
+            template.update("insert into users_roles values (:userId, :roleId)", params);
+        }
         return user;
     }
 
@@ -102,16 +109,12 @@ public class UserRepositoryImpl implements UserRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", userId);
         template.update("delete from users where id = :id", params);
+        template.update("delete from users_roles where user_id = :id", params);
         return true;
     }
 
-    private RowMapper<User> mapper = new RowMapper<User>() {
-        @Override
-        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new User()
-                    .setId(rs.getInt("id"))
-                    .setLastName(rs.getString("last_name"))
-                    .setFirstName(rs.getString("first_name"));
-        }
-    };
+    private RowMapper<User> mapper = (rs, rowNum) -> new User()
+            .setId(rs.getInt("id"))
+            .setLastName(rs.getString("last_name"))
+            .setFirstName(rs.getString("first_name"));
 }
