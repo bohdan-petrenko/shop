@@ -49,8 +49,6 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     public boolean deletePermission(Short permissionId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("permissionId", permissionId);
-        /*Map<String, Object> mapParams = new HashMap<>();
-        mapParams.put("id", permissionId);*/
         if(template.queryForObject("select count(*) from roles_permissions where permission_id in(" + permissionId + ")", params, Integer.class) == 0) {
             template.update("delete from permissions where id = :permissionId", params);
             return true;

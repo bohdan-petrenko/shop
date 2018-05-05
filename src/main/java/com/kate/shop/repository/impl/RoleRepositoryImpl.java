@@ -117,8 +117,11 @@ public class RoleRepositoryImpl implements RoleRepository {
     public boolean deleteRole(Short roleId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", roleId);
-        template.update("delete from roles where id = :id", params);
-        return true;
+        if (template.queryForObject("select count(*) from users_roles where role_id = :id", params, Integer.class) == 0) {
+            template.update("delete from roles where id = :id", params);
+            return true;
+        }
+        throw new IllegalArgumentException("role is used");
     }
 
     private RowMapper<Role> mapper = (rs, rowNum) -> new Role()
