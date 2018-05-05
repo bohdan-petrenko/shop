@@ -88,6 +88,31 @@ public class RoleRepositoryImpl implements RoleRepository {
         return role;
     }
 
+    // todo updateRole
+    @Override
+    public Role updateRole(Role role) {
+        Role dbRole = findRoleById(role.getId());
+        if (dbRole == null)
+            throw new IllegalArgumentException("no such role");
+        StringBuilder stringBuilder = new StringBuilder();
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        stringBuilder.append("(");
+        for (Permission p : role.getPermissions()) {
+            stringBuilder.append(p.getId().toString());
+            stringBuilder.append(",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.append(")");
+
+        params.addValue("roleId", role.getId());
+        template.update("delete from roles_permissions where role_id = :roleId", params);
+        for (Permission p : role.getPermissions()) {
+            params.addValue("permissionId", p.getId());
+            template.update("insert into roles_permissions (role_id, permission_id) values (:roleId, :permissionId)", params);
+        }
+        return null;
+    }
+
     @Override
     public boolean deleteRole(Short roleId) {
         MapSqlParameterSource params = new MapSqlParameterSource();

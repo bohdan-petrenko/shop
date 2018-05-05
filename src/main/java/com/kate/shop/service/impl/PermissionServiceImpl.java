@@ -33,6 +33,11 @@ public class PermissionServiceImpl implements PermissionService {
         return repository.savePermission(permission);
     }
 
+    @Override
+    public Permission updatePermission(Permission permission) {
+        return repository.updatePermissions(permission);
+    }
+
     @Autowired
     NamedParameterJdbcTemplate template;
 

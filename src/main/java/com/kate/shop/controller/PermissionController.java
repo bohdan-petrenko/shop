@@ -24,6 +24,11 @@ public class PermissionController {
         return permissionService.savePermission(permission);
     }
 
+    @PutMapping("update-permission")
+    public Permission updatePermission(@RequestBody Permission permission) {
+        return permissionService.updatePermission(permission);
+    }
+
     @DeleteMapping("delete-permission")
     public boolean delete (@RequestParam Short id) {
         return permissionService.deletePermission(id);
