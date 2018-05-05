@@ -8,5 +8,7 @@ public interface RoleService {
 
     Role saveRole(Role role);
 
+    Role updateRole(Role role);
+
     boolean deleteRole(Short id);
 }

@@ -23,6 +23,11 @@ public class RoleController {
         return roleService.saveRole(role);
     }
 
+    @PutMapping("update-role")
+    public Role updatePermission(@RequestBody Role role) {
+        return roleService.updateRole(role);
+    }
+
     @DeleteMapping("delete-role")
     public boolean delete (@RequestParam Short id) {
         return roleService.deleteRole(id);

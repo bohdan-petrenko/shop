@@ -26,6 +26,12 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role updateRole(Role role) {
+        return repository.updateRole(role);
+    }
+
+
+    @Override
     public boolean deleteRole(Short id) {
         //TODO You can't delete role while any user uses it. See explanation in PermissionServiceImpl.delete
         return repository.deleteRole(id);

@@ -1,8 +1,10 @@
 package com.kate.shop.repository.impl;
 
+import com.kate.shop.controller.UserController;
 import com.kate.shop.entity.Permission;
 import com.kate.shop.repository.PermissionRepository;
 import com.kate.shop.utils.DaoUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,14 +13,13 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Repository
 public class PermissionRepositoryImpl implements PermissionRepository {
 
+    private final org.slf4j.Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private NamedParameterJdbcTemplate template;
 
@@ -37,6 +38,11 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         template.update("insert into permissions (permission) values (:permission) returning id", params, holder);
         permission.setId(holder.getKey().shortValue());
         return permission;
+    }
+
+    @Override
+    public Permission updatePermissions(Permission permission) {
+        return null;
     }
 
     @Override

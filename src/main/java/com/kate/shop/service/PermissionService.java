@@ -8,5 +8,7 @@ public interface PermissionService {
 
     Permission savePermission(Permission role);
 
+    Permission updatePermission(Permission permission);
+
     boolean deletePermission(Short id);
 }
