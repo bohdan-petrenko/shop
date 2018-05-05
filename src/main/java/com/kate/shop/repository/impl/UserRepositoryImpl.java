@@ -1,5 +1,6 @@
 package com.kate.shop.repository.impl;
 
+import com.kate.shop.entity.Role;
 import com.kate.shop.entity.User;
 import com.kate.shop.repository.UserRepository;
 import com.kate.shop.utils.DaoUtils;
@@ -53,11 +54,33 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User save(User user) {
         MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("email", user.getEmail());
+        params.addValue("phone", user.getPhone());
         params.addValue("first_name", user.getFirstName());
         params.addValue("last_name", user.getLastName());
+        params.addValue("password", user.getPassword());
+        params.addValue("enabled", user.getEnabled());
+        params.addValue("created", user.getCreated());
+        params.addValue("expired", user.getExpired());
+        /*StringBuilder stringBuilder = new StringBuilder();
+        for (Role r: user.getRoles()) {
+            stringBuilder.append(r.getId());
+            stringBuilder.append(",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);*/
+
         KeyHolder holder = new GeneratedKeyHolder();
-        template.update("insert into users (first_name, last_name) values (:first_name, :last_name) returning id", params, holder);
+        template.update("insert into users (email, phone, first_name, last_name, password, enabled, created, expired) values (:email, :phone, :first_name, :last_name, :password, :enabled, :created, :expired) returning id", params, holder);
         user.setId(holder.getKey().intValue());
+
+        params = new MapSqlParameterSource();
+        params.addValue("userId", user.getId());
+        //params.addValue("roleId", stringBuilder.toString());
+        for (Role r: user.getRoles()) {
+            params.addValue("roleId", r.getId());
+            template.update("insert into users_roles values (:userId, :roleId)", params, holder);
+        }
+
         return user;
     }
 
