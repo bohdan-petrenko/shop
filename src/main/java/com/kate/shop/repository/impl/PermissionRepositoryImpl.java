@@ -4,6 +4,7 @@ import com.kate.shop.controller.UserController;
 import com.kate.shop.entity.Permission;
 import com.kate.shop.repository.PermissionRepository;
 import com.kate.shop.utils.DaoUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,9 +20,13 @@ import java.util.Map;
 @Repository
 public class PermissionRepositoryImpl implements PermissionRepository {
 
-    private final org.slf4j.Logger log = LoggerFactory.getLogger(UserController.class);
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    @Autowired
+    private RowMapper<Permission> mapper;
 
     @Override
     public Permission findPermissionById(Short id) {
@@ -54,13 +59,5 @@ public class PermissionRepositoryImpl implements PermissionRepository {
             return true;
         }
         throw new IllegalArgumentException("permission is used");
-    }
-
-    private RowMapper<Permission> mapper = createMapper();
-
-    static RowMapper<Permission> createMapper() {
-        return (rs, rowNum) -> new Permission()
-                .setId(rs.getShort("id"))
-                .setName(rs.getString("permission"));
     }
 }
