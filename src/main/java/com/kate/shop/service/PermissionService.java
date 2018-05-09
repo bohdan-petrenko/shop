@@ -1,6 +1,7 @@
 package com.kate.shop.service;
 
 import com.kate.shop.entity.Permission;
+import com.kate.shop.entity.Role;
 
 public interface PermissionService {
 
@@ -8,7 +9,7 @@ public interface PermissionService {
 
     Permission savePermission(Permission role);
 
-    Permission updatePermission(Permission permission);
+    Permission updatePermission(Role role);
 
     boolean deletePermission(Short id);
 }

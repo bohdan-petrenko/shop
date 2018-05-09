@@ -17,6 +17,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Repository
@@ -57,7 +58,6 @@ public class RoleRepositoryImpl implements RoleRepository {
 
         params = new MapSqlParameterSource();
         params.addValue("role", role.getName());
-//        params.addValue("permissions", role.getPermissions());
 
         KeyHolder holder = new GeneratedKeyHolder();
         // insert roles into roles table
@@ -80,7 +80,7 @@ public class RoleRepositoryImpl implements RoleRepository {
         return role;
     }
 
-    // todo updateRole
+
     @Override
     public Role updateRole(Role role) {
         Role dbRole = findRoleById(role.getId());
