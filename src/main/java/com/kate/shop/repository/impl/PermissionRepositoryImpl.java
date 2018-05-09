@@ -2,7 +2,9 @@ package com.kate.shop.repository.impl;
 
 import com.kate.shop.controller.UserController;
 import com.kate.shop.entity.Permission;
+import com.kate.shop.entity.Role;
 import com.kate.shop.repository.PermissionRepository;
+import com.kate.shop.repository.RoleRepository;
 import com.kate.shop.utils.DaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +48,8 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
-    public Permission updatePermissions(Permission permission) {
+    public Permission updatePermissions(Role role) {
+
         return null;
     }
 

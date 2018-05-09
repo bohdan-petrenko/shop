@@ -25,8 +25,8 @@ public class PermissionController {
     }
 
     @PutMapping("update-permission")
-    public Permission updatePermission(@RequestBody Permission permission) {
-        return permissionService.updatePermission(permission);
+    public Permission updatePermission(@RequestBody Role role) {
+        return permissionService.updatePermission(role);
     }
 
     @DeleteMapping("delete-permission")

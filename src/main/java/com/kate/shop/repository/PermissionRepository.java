@@ -1,6 +1,7 @@
 package com.kate.shop.repository;
 
 import com.kate.shop.entity.Permission;
+import com.kate.shop.entity.Role;
 
 public interface PermissionRepository {
 
@@ -8,7 +9,7 @@ public interface PermissionRepository {
 
     Permission savePermission(Permission role);
 
-    Permission updatePermissions(Permission permission);
+    Permission updatePermissions(Role role);
 
     boolean deletePermission(Short permissionId);
 

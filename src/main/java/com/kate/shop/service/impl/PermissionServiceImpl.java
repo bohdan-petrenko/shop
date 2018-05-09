@@ -1,6 +1,7 @@
 package com.kate.shop.service.impl;
 
 import com.kate.shop.entity.Permission;
+import com.kate.shop.entity.Role;
 import com.kate.shop.repository.PermissionRepository;
 import com.kate.shop.repository.impl.PermissionRepositoryImpl;
 import com.kate.shop.service.PermissionService;
@@ -34,8 +35,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission updatePermission(Permission permission) {
-        return repository.updatePermissions(permission);
+    public Permission updatePermission(Role role) {
+        return repository.updatePermissions(role);
     }
 
     @Autowired

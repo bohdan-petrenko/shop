@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -53,26 +54,31 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("email", user.getEmail());
-        params.addValue("phone", user.getPhone());
-        params.addValue("first_name", user.getFirstName());
-        params.addValue("last_name", user.getLastName());
-        params.addValue("password", user.getPassword());
-        params.addValue("enabled", user.getEnabled());
-        params.addValue("created", user.getCreated());
-        params.addValue("expired", user.getExpired());
         KeyHolder holder = new GeneratedKeyHolder();
         template.update("insert into users (email, phone, first_name, last_name, password, enabled, created, expired) " +
-                "values (:email, :phone, :first_name, :last_name, :password, :enabled, :created, :expired) returning id", params, holder);
+                "values (:email, :phone, :first_name, :last_name, :password, :enabled, :created, :expired) returning id",
+                new MapSqlParameterSource()
+                        .addValue("email", user.getEmail())
+                        .addValue("phone", user.getPhone())
+                        .addValue("phone", user.getPhone())
+                        .addValue("first_name", user.getFirstName())
+                        .addValue("last_name", user.getLastName())
+                        .addValue("password", user.getPassword())
+                        .addValue("enabled", user.getEnabled())
+                        .addValue("created", user.getCreated())
+                        .addValue("expired", user.getExpired())
+                , holder);
         user.setId(holder.getKey().intValue());
 
-        params = new MapSqlParameterSource();
-        params.addValue("userId", user.getId());
-        for (Role r: user.getRoles()) {
-            params.addValue("roleId", r.getId());
-            template.update("insert into users_roles values (:userId, :roleId)", params, holder);
-        }
+        new MapSqlParameterSource()
+            .addValue("userId", user.getId());
+
+        template.batchUpdate("insert into users_roles values (:userId, :roleId)",
+                user.getRoles().stream()
+                        .map(r -> new MapSqlParameterSource()
+                        .addValue("userId", user.getId())
+                        .addValue("roleId", r.getId()))
+                .toArray(MapSqlParameterSource[]::new));
 
         return user;
     }
@@ -82,25 +88,30 @@ public class UserRepositoryImpl implements UserRepository {
         User dbUser = findById(user.getId());
         if (dbUser == null)
             throw new IllegalArgumentException(String.format("user with id: %d not found", user.getId()));
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("email", user.getEmail());
-        params.addValue("phone", user.getPhone());
-        params.addValue("first_name", user.getFirstName());
-        params.addValue("last_name", user.getLastName());
-        params.addValue("password", user.getPassword());
-        params.addValue("enabled", user.getEnabled());
-        params.addValue("created", user.getCreated());
-        params.addValue("expired", user.getExpired());
-        params.addValue("id", user.getId());
+
         template.update("update users set email = :email, phone = :phone, first_name = :first_name, last_name = :last_name, password = :password," +
-                "enabled = :enabled, created = :created, expired = :expired where id = :id", params);
-        params = new MapSqlParameterSource();
-        params.addValue("userId", user.getId());
-        for (Role r: user.getRoles()) {
-            params.addValue("roleId", r.getId());
-            template.update("delete from users_roles where user_id = :userId", params);
-            template.update("insert into users_roles values (:userId, :roleId)", params);
-        }
+                "enabled = :enabled, created = :created, expired = :expired where id = :id",
+                new MapSqlParameterSource()
+                        .addValue("email", user.getEmail())
+                        .addValue("phone", user.getPhone())
+                        .addValue("phone", user.getPhone())
+                        .addValue("first_name", user.getFirstName())
+                        .addValue("last_name", user.getLastName())
+                        .addValue("password", user.getPassword())
+                        .addValue("enabled", user.getEnabled())
+                        .addValue("created", user.getCreated())
+                        .addValue("expired", user.getExpired())
+                        .addValue("id", user.getId()));
+
+            template.update("delete from users_roles where user_id = :userId",
+                    new MapSqlParameterSource()
+                    .addValue("userId", user.getId()));
+            template.batchUpdate("insert into users_roles values (:userId, :roleId)",
+                    user.getRoles().stream()
+                            .map(r -> new MapSqlParameterSource()
+                                    .addValue("userId", user.getId())
+                                    .addValue("roleId", r.getId()))
+                            .toArray(MapSqlParameterSource[] :: new));
         return user;
     }
 
