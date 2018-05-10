@@ -24,7 +24,7 @@ public class RoleController {
     }
 
     @PutMapping("update-role")
-    public Role updatePermission(@RequestBody Role role) {
+    public Role updateRole(@RequestBody Role role) {
         return roleService.updateRole(role);
     }
 

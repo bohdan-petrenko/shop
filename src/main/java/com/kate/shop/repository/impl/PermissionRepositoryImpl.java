@@ -2,9 +2,8 @@ package com.kate.shop.repository.impl;
 
 import com.kate.shop.controller.UserController;
 import com.kate.shop.entity.Permission;
-import com.kate.shop.entity.Role;
+import com.kate.shop.exceptions.http.BadRequestException;
 import com.kate.shop.repository.PermissionRepository;
-import com.kate.shop.repository.RoleRepository;
 import com.kate.shop.utils.DaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +47,22 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
-    public Permission updatePermissions(Role role) {
+    public Permission updatePermissions(Permission permission) {
+        Permission dbPermission = findPermissionById(permission.getId());
+        if (dbPermission == null)
+            throw new BadRequestException("no such id");
 
-        return null;
+        if (template.queryForObject("select count (*) from permissions where id in ( :permissionId )",
+                new MapSqlParameterSource().addValue("permissionId", permission.getId()), Integer.class) != 1)
+            throw new BadRequestException("no such permission");
+
+        if (permission.getName() != null) {
+            template.update("update permissions set permission = :name where id = :id",
+                    new MapSqlParameterSource()
+                            .addValue("name", permission.getName())
+                            .addValue("id", permission.getId()));
+        }
+        return permission;
     }
 
     @Override

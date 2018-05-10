@@ -1,16 +1,11 @@
 package com.kate.shop.service.impl;
 
 import com.kate.shop.entity.Permission;
-import com.kate.shop.entity.Role;
 import com.kate.shop.repository.PermissionRepository;
-import com.kate.shop.repository.impl.PermissionRepositoryImpl;
 import com.kate.shop.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 //TODO Why you decided to remove transactional?
 // because when i'm trying to save new permission there's a message that i can't do this
@@ -35,8 +30,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission updatePermission(Role role) {
-        return repository.updatePermissions(role);
+    public Permission updatePermission(Permission permission) {
+        return repository.updatePermissions(permission);
     }
 
     @Autowired

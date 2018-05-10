@@ -9,7 +9,7 @@ public interface PermissionRepository {
 
     Permission savePermission(Permission role);
 
-    Permission updatePermissions(Role role);
+    Permission updatePermissions(Permission permission);
 
     boolean deletePermission(Short permissionId);
 
