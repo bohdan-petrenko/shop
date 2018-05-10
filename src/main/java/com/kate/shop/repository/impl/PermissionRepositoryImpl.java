@@ -2,10 +2,8 @@ package com.kate.shop.repository.impl;
 
 import com.kate.shop.controller.UserController;
 import com.kate.shop.entity.Permission;
-import com.kate.shop.entity.Role;
 import com.kate.shop.exceptions.http.BadRequestException;
 import com.kate.shop.repository.PermissionRepository;
-import com.kate.shop.repository.RoleRepository;
 import com.kate.shop.utils.DaoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
