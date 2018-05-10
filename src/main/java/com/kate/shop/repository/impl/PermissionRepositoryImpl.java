@@ -52,10 +52,6 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         if (dbPermission == null)
             throw new BadRequestException("no such id");
 
-        if (template.queryForObject("select count (*) from permissions where id in ( :permissionId )",
-                new MapSqlParameterSource().addValue("permissionId", permission.getId()), Integer.class) != 1)
-            throw new BadRequestException("no such permission");
-
         if (permission.getName() != null) {
             template.update("update permissions set permission = :name where id = :id",
                     new MapSqlParameterSource()
