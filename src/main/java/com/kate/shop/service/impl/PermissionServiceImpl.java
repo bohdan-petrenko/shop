@@ -35,8 +35,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission updatePermission(Role role) {
-        return repository.updatePermissions(role);
+    public Permission updatePermission(Permission permission) {
+        return repository.updatePermissions(permission);
     }
 
     @Autowired
