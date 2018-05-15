@@ -6,7 +6,6 @@ import com.kate.shop.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-//TODO you forgot to implement update method (@PutMapping)
 @RestController
 @RequestMapping("permissions")
 public class PermissionController {

@@ -6,7 +6,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
-//TODO do the same for roles and permissions repositories
 public interface UserRepository {
 
     User findById(Integer id);

@@ -1,6 +1,5 @@
 package com.kate.shop.entity;
 
-//TODO permissions table
 public class Permission {
     private Short id;
     private String name;

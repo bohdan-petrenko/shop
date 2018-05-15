@@ -7,6 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("users")
 public class UserController {
@@ -27,6 +31,14 @@ public class UserController {
     public User findById(@RequestParam Integer id) {
         log.info("...");
         return userService.findById(id);
+    }
+
+    @GetMapping("find-page")
+    public List<User> findPage(@RequestParam Optional<String> email, @RequestParam Optional<String> firstName, @RequestParam Optional<String> lastName,
+                         @RequestParam Optional<Boolean> enabled, @RequestParam Optional<OffsetDateTime> createdFrom, @RequestParam Optional<OffsetDateTime> createdTo,
+                         @RequestParam Integer pageNumber) {
+        log.info("...");
+        return userService.findPage(email, firstName, lastName, enabled, createdFrom, createdTo, pageNumber);
     }
 
     @PostMapping("save")

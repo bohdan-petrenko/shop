@@ -9,8 +9,6 @@ import java.util.stream.IntStream;
 public final class DigestUtils {
     private DigestUtils() {}
 
-
-    // TODO use this to make hash of user password.
     // TODO later when you will need to check passwords - make hash of the given password and com[are it with instance, stored in the database by String.equals method
     public static String sha1(String msg) {
         return digest(msg, "SHA-1");
