@@ -2,11 +2,10 @@ package com.kate.shop.entity;
 
 import java.util.Set;
 
-//TODO roles table
 public class Role {
     private Short id;
     private String name;
-    private Set<Permission> permissions; //TODO many to many relationship
+    private Set<Permission> permissions;
 
     public Short getId() {
         return id;

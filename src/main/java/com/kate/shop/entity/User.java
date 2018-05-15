@@ -13,11 +13,11 @@ public class User {
     private String phone;
     private String firstName;
     private String lastName;
-    private String password; //TODO store password hash in database (sha1 recommended)
+    private String password;
     private Boolean enabled;
     private OffsetDateTime created;
     private OffsetDateTime expired;
-    private Set<Role> roles; //TODO many to many relationship
+    private Set<Role> roles;
 
     private final org.slf4j.Logger log = LoggerFactory.getLogger(UserController.class);
 

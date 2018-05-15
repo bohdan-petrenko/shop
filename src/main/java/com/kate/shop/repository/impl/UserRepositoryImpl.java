@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,21 @@ public class UserRepositoryImpl implements UserRepository {
         return DaoUtils.one(template.query("select * from users where id = :id", params, mapper));
     }
 
-    //todo order by id
     @Override
     public List<User> findPage(Optional<String> email, Optional<String> firstName, Optional<String> lastName, Optional<Boolean> enabled, Optional<OffsetDateTime> createdFrom, Optional<OffsetDateTime> createdTo, Integer limit, Integer offset) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", email);
+        params.put("firstName", firstName);
+        params.put("lastName", lastName);
+        params.put("enabled", enabled);
+        params.put("createdFrom", createdFrom);
+        params.put("createdTo", createdTo);
+        params.put("limit", limit);
+        params.put("offset", offset);
+
+        template.query("select * from users where email = :email or first_name = :first_name or last_name = :last_name or " +
+                "enabled = :enabled or created = :created or expired = :expired order by id offset 0 limit 0", params, mapper);
+
         return null;
     }
 
@@ -55,7 +68,6 @@ public class UserRepositoryImpl implements UserRepository {
                 "values (:email, :phone, :first_name, :last_name, :password, :enabled, :created, :expired) returning id",
                 new MapSqlParameterSource()
                         .addValue("email", user.getEmail())
-                        .addValue("phone", user.getPhone())
                         .addValue("phone", user.getPhone())
                         .addValue("first_name", user.getFirstName())
                         .addValue("last_name", user.getLastName())
@@ -90,7 +102,6 @@ public class UserRepositoryImpl implements UserRepository {
                 new MapSqlParameterSource()
                         .addValue("email", user.getEmail())
                         .addValue("phone", user.getPhone())
-                        .addValue("phone", user.getPhone())
                         .addValue("first_name", user.getFirstName())
                         .addValue("last_name", user.getLastName())
                         .addValue("password", user.getPassword())
@@ -122,6 +133,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     private RowMapper<User> mapper = (rs, rowNum) -> new User()
             .setId(rs.getInt("id"))
+            .setEmail(rs.getString("email"))
+            .setPhone(rs.getString("phone"))
             .setLastName(rs.getString("last_name"))
-            .setFirstName(rs.getString("first_name"));
+            .setFirstName(rs.getString("first_name"))
+            .setPassword(rs.getString("password"))
+            .setEnabled(rs.getBoolean("enabled"))
+            .setCreated(OffsetDateTime.parse(rs.getString("created"), DateTimeFormatter.ofPattern("yyyy MM dd")))
+            .setExpired(OffsetDateTime.parse(rs.getString("expired"), DateTimeFormatter.ofPattern("yyyy MM dd")));
 }

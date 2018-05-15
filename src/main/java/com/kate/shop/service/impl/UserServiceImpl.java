@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     // todo calculate limit and offset based on page number
     @Override
     public List<User> findPage(Optional<String> email, Optional<String> firstName, Optional<String> lastName, Optional<Boolean> enabled, Optional<OffsetDateTime> createdFrom, Optional<OffsetDateTime> createdTo, Integer pageNumber) {
-        return null;
+        return repository.findPage(email, firstName, lastName, enabled, createdFrom, createdTo, 5, 5);
     }
 
     @Override
